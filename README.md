@@ -1,4 +1,4 @@
-﻿# bespoke-restapi2 usage
+﻿﻿# bespoke-restapi2 usage
 
 Using the desired requests from Postman:
 
@@ -17,26 +17,26 @@ POST and PUT methods require a JSON object in the body with the updated values i
 
 Returns a specified entry from the db
 
-127.0.0.1:5000/fruits/name
+0.0.0.0:80/fruits/lime
 
-ex. 127.0.0.1:5000/fruits/Apple
+ex. 0.0.0.0:80/fruits/Apple
 
 ##### POST*
 
 Updates and returns the updated entry
 
-127.0.0.1:5000/fruits/name
+0.0.0.0:80/fruits/name
 
 ##### PUT
 
 Creates or updates the entry and returns the new entry
 
-127.0.0.1:5000/fruits/name
+0.0.0.0:80/fruits/name
 
 
 ##### DELETE*
 
 Deletes the entry and returns the deleted item + deleted status
 
-127.0.0.1:5000/fruits/name
+0.0.0.0:80/fruits/name
 
