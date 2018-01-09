@@ -1,0 +1,17 @@
+version: "2"
+services:
+  api:
+    build: ./restapi
+    volumes:
+      - ./restapi:/app
+    ports:
+      - "80:80"
+    links:
+      - mongo
+    restart: on-failure
+  mongo:
+    image: mongo
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - "27017:27017"
