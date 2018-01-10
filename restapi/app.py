@@ -63,7 +63,9 @@ class BespokeApp(Resource):
 class BespokeNoParamApp(Resource):
     def put(self):
         try:
+            print("in put", file=sys.stderr)
             args = parser.parse_args()
+            print(args, file=sys.stderr)
             if args['name'] is not None and args['sweetness'] is not None and isinstance(args['sweetness'], int):
                 sweetness = args['sweetness']
                 name = args['name']
