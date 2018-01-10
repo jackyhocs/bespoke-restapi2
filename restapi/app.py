@@ -63,7 +63,9 @@ class BespokeApp(Resource):
 class BespokeNoParamApp(Resource):
     def put(self):
         try:
+            print("in put", file=sys.stderr)
             args = parser.parse_args()
+            print(args, file=sys.stderr)
             if args['name'] is not None and args['sweetness'] is not None and isinstance(args['sweetness'], int):
                 sweetness = args['sweetness']
                 name = args['name']
@@ -78,8 +80,8 @@ class BespokeNoParamApp(Resource):
                     return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
             else:
                 return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
-        except Exception as e:
-            return e
+        except Exception:
+            return make_response(jsonify({'error': 'Parameters not provided'}), 404)
 
     def get(self):
         try:
