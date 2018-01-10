@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_restful import Api, Resource, reqparse
 from model import BespokeModel
 
@@ -15,52 +15,60 @@ parser.add_argument('name')
 
 class BespokeApp(Resource):
     # TODO: change this to ID, and validate the ID is proper
-    def get(self, name):
+    def get(self, _id):
         try:
-            model = BespokeModel()
-            result = model.get_by_name(name)
-            return result
+            if BespokeModel.is_valid(_id):
+                result = BespokeModel.get_by_id(_id)
+                return result
+            else:
+                return None
         except Exception as e:
             return e
 
-    def put(self, name):
-        # TODO: change this to ID, and validate the ID is proper
+    def post(self, _id):
         try:
-            model = BespokeModel()
-            args = parser.parse_args()
-            sweetness = args['sweetness']
-            output = model.check_and_insert(name, sweetness)
-            return output
+            if BespokeModel.is_valid(_id):
+                args = parser.parse_args()
+                sweetness = args['sweetness']
+                result = BespokeModel.update_item(_id, sweetness)
+                return result
+            else:
+                return None
         except Exception as e:
             return e
 
-    def delete(self, name):
+    def delete(self, _id):
         # TODO: change this to ID, and validate the ID is proper
         try:
-            model = BespokeModel()
-            output = model.check_and_delete(name)
-            return output
+            if BespokeModel.is_valid(_id):
+                result = BespokeModel.delete_item(_id)
+                return result
+            else:
+                return None
         except Exception as e:
             return e
 
 
 class BespokeMultipleApp(Resource):
-    def post(self):
+    def put(self, _id):
+        # TODO: change this to ID, and validate the ID is proper
         try:
-            model = BespokeModel()
             args = parser.parse_args()
             sweetness = args['sweetness']
             name = args['name']
-            output = model.check_and_update(name, sweetness)
-            return output
+            #TODO: Change the update function
+            if not BespokeModel.is_existing_id(_id):
+                result = BespokeModel.insert_item(name, sweetness)
+                return result
+            else:
+                return None
         except Exception as e:
             return e
 
     def get(self):
         try:
-            model = BespokeModel()
-            output = model.get_all()
-            return output
+            result = BespokeModel.get_all()
+            return result
         except Exception as e:
             return e
 
