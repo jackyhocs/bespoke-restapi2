@@ -22,9 +22,18 @@ class BespokeDao:
             raise
 
     def get_by_id(self, _id):
-        db = self.db.fruits
         try:
+            db = self.db.fruits
             result = db.find_one({'_id': ObjectId(_id)})
+            return result if result is not None else None
+        except Exception as e:
+            print(e, file=sys.stderr)
+            raise
+
+    def get_by_name(self, name):
+        try:
+            db = self.db.fruits
+            result = db.find_one({'name': name})
             return result if result is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
@@ -43,16 +52,19 @@ class BespokeDao:
         try:
             db = self.db.fruits
             inserted = db.insert_one({'name': name, 'sweetness': sweetness})
-            return inserted if inserted is not None else None
+            find = db.find_one({'_id': inserted.inserted_id})
+            return find if find is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
             raise
 
-    def update_item(self, _id, sweetness):
+    def update_item(self, _id, name, sweetness):
         try:
             db = self.db.fruits
-            modified = db.update_one({'_id': ObjectId(_id)}, {'$set': {'sweetness': sweetness}})
-            return modified if modified is not None else None
+            modified = db.update_one({'_id': ObjectId(_id)},
+                                     {'$set': {'name':name, 'sweetness': sweetness}})
+            find = db.find_one({'_id': ObjectId(_id)})
+            return find if find is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
             raise
