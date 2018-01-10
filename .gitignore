@@ -1,4 +1,4 @@
 .idea/
 __pycache__/
 data/
-restapi/__pycache__/
+restapi/__pycache__/*.pyc
