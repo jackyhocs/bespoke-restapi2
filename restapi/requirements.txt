@@ -1,3 +1,3 @@
-Flask
-Flask-PyMongo
-flask-restful
+Flask==0.12.2
+Flask-PyMongo==0.5.1
+flask-restful==0.3.6
