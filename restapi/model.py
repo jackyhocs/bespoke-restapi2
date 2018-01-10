@@ -14,8 +14,11 @@ class BespokeModel:
         try:
             dao = BespokeDao()
             item = dao.get_by_id(_id)
-            item_model = BespokeModel(item)
-            return item_model if item is not None else None
+            if item is None:
+                item_model = None
+            else:
+                item_model = BespokeModel(item)
+            return item_model
         except Exception as e:
             print(e, file=sys.stderr)
             raise
@@ -87,9 +90,8 @@ class BespokeModel:
     def delete_item(_id):
         try:
             dao = BespokeDao()
-            item = dao.get_by_id(_id)
+            item = dao.delete_item(_id)
             item_model = BespokeModel(item) if item else None
-            dao.delete_item(item_model._id)
             return item_model
         except Exception as e:
             print(e, file=sys.stderr)

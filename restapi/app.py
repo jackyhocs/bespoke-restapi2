@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, make_response, jsonify
 from flask_restful import Api, Resource, reqparse
 from model import BespokeModel
 import sys
+from validator import is_valid_id
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,21 +15,22 @@ parser.add_argument('name')
 class BespokeApp(Resource):
     def get(self, _id):
         try:
-            if BespokeModel.is_valid(_id):
+            if is_valid_id(_id):
                 result = BespokeModel.get_by_id(_id)
                 if result is None:
                     fruit = {'_id': _id, 'error': "Entry not retrieved"}
                 else:
                     fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                return fruit
             else:
-                fruit = {'_id': _id, 'error': "Entry does not exist"}
-            return fruit
+                return make_response(jsonify({"error": 'ID specified does not exist'}),404)
+
         except Exception as e:
             return e
 
     def post(self, _id):
         try:
-            if BespokeModel.is_valid(_id):
+            if is_valid_id(_id):
                 args = parser.parse_args()
                 sweetness = args['sweetness']
                 name = args['name']
@@ -37,23 +39,23 @@ class BespokeApp(Resource):
                     fruit = {'_id': _id, 'error': "Entry not updated"}
                 else:
                     fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                return fruit
             else:
-                fruit = {'_id': _id, 'error': "Entry does not exist"}
-            return fruit
+                return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
         except Exception as e:
             return e
 
     def delete(self, _id):
         try:
-            if BespokeModel.is_valid(_id):
+            if is_valid_id(_id):
                 result = BespokeModel.delete_item(_id)
                 if result is None:
                     fruit = {'_id': _id, 'error': "Entry could not be deleted"}
                 else:
                     fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                return fruit
             else:
-                fruit = {'_id': _id, 'error': "Entry does not exist"}
-            return fruit
+                return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
         except Exception as e:
             return e
 
@@ -62,17 +64,20 @@ class BespokeNoParamApp(Resource):
     def put(self):
         try:
             args = parser.parse_args()
-            sweetness = args['sweetness']
-            name = args['name']
-            if not BespokeModel.is_existing_name(name):
-                result = BespokeModel.insert_item(name, sweetness)
-                if result is None:
-                    fruit = {'name': name,'sweetness': sweetness, 'error': "Entry does not exist"}
+            if args['name'] is not None and args['sweetness'] is not None and isinstance(args['sweetness'], int):
+                sweetness = args['sweetness']
+                name = args['name']
+                if not BespokeModel.is_existing_name(name):
+                    result = BespokeModel.insert_item(name, sweetness)
+                    if result is None:
+                        fruit = {'name': name,'sweetness': sweetness, 'error': "Entry does not exist"}
+                    else:
+                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                    return fruit
                 else:
-                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
-                return fruit
+                    return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
             else:
-                return None
+                return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
         except Exception as e:
             return e
 

@@ -24,12 +24,8 @@ class BespokeDao:
     def get_by_id(self, _id):
         try:
             db = self.db.fruits
-            validID = ObjectId.is_valid(_id)
-            result = None
-            if validID:
-                print("VALID ID", file=sys.stderr)
-                result = db.find_one({'_id': ObjectId(_id)})
-            return result
+            result = db.find_one({'_id': ObjectId(_id)})
+            return result if result is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
             raise
@@ -46,11 +42,8 @@ class BespokeDao:
     def check_if_id_exists(self, _id):
         try:
             db = self.db.fruits
-            validID = ObjectId.is_valid(_id)
-            result = None
-            if validID:
-                result = db.find_one({'_id': ObjectId(_id)})
-            return result
+            result = db.find_one({'_id': ObjectId(_id)})
+            return result if result is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
             raise
@@ -69,7 +62,7 @@ class BespokeDao:
         try:
             db = self.db.fruits
             modified = db.update_one({'_id': ObjectId(_id)},
-                                     {'$set': {'name':name, 'sweetness': sweetness}})
+                                     {'$set': {'name': name, 'sweetness': sweetness}})
             if modified.acknowledged:
                 return {'name': name, 'sweetness': sweetness, '_id': _id}
             else:
@@ -81,7 +74,7 @@ class BespokeDao:
     def delete_item(self, _id):
         try:
             db = self.db.fruits
-            deleted = db.delete_one({'_id': ObjectId(_id)})
+            deleted = db.find_one_and_delete({'_id': ObjectId(_id)})
             return deleted if deleted is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
