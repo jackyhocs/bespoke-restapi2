@@ -16,10 +16,13 @@ class BespokeApp(Resource):
         try:
             if BespokeModel.is_valid(_id):
                 result = BespokeModel.get_by_id(_id)
-                fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
-                return fruit
+                if result is None:
+                    fruit = {'_id': _id, 'error': "Entry not retrieved"}
+                else:
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
             else:
-                return None
+                fruit = {'_id': _id, 'error': "Entry does not exist"}
+            return fruit
         except Exception as e:
             return e
 
@@ -30,10 +33,13 @@ class BespokeApp(Resource):
                 sweetness = args['sweetness']
                 name = args['name']
                 result = BespokeModel.update_item(_id, name, sweetness)
-                fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
-                return fruit
+                if result is None:
+                    fruit = {'_id': _id, 'error': "Entry not updated"}
+                else:
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
             else:
-                return None
+                fruit = {'_id': _id, 'error': "Entry does not exist"}
+            return fruit
         except Exception as e:
             return e
 
@@ -41,10 +47,13 @@ class BespokeApp(Resource):
         try:
             if BespokeModel.is_valid(_id):
                 result = BespokeModel.delete_item(_id)
-                fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
-                return fruit
+                if result is None:
+                    fruit = {'_id': _id, 'error': "Entry could not be deleted"}
+                else:
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
             else:
-                return None
+                fruit = {'_id': _id, 'error': "Entry does not exist"}
+            return fruit
         except Exception as e:
             return e
 
@@ -55,10 +64,12 @@ class BespokeNoParamApp(Resource):
             args = parser.parse_args()
             sweetness = args['sweetness']
             name = args['name']
-            arg = BespokeModel.is_existing_name(name)
-            if not arg:
+            if not BespokeModel.is_existing_name(name):
                 result = BespokeModel.insert_item(name, sweetness)
-                fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                if result is None:
+                    fruit = {'name': name,'sweetness': sweetness, 'error': "Entry does not exist"}
+                else:
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
                 return fruit
             else:
                 return None

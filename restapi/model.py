@@ -15,7 +15,7 @@ class BespokeModel:
             dao = BespokeDao()
             item = dao.get_by_id(_id)
             item_model = BespokeModel(item)
-            return item_model if item else None
+            return item_model if item is not None else None
         except Exception as e:
             print(e, file=sys.stderr)
             raise

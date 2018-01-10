@@ -24,8 +24,12 @@ class BespokeDao:
     def get_by_id(self, _id):
         try:
             db = self.db.fruits
-            result = db.find_one({'_id': ObjectId(_id)})
-            return result if result is not None else None
+            validID = ObjectId.is_valid(_id)
+            result = None
+            if validID:
+                print("VALID ID", file=sys.stderr)
+                result = db.find_one({'_id': ObjectId(_id)})
+            return result
         except Exception as e:
             print(e, file=sys.stderr)
             raise
@@ -42,8 +46,11 @@ class BespokeDao:
     def check_if_id_exists(self, _id):
         try:
             db = self.db.fruits
-            result = db.find_one({'_id': ObjectId(_id)})
-            return result if result is not None else None
+            validID = ObjectId.is_valid(_id)
+            result = None
+            if validID:
+                result = db.find_one({'_id': ObjectId(_id)})
+            return result
         except Exception as e:
             print(e, file=sys.stderr)
             raise
