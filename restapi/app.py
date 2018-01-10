@@ -78,8 +78,8 @@ class BespokeNoParamApp(Resource):
                     return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
             else:
                 return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
-        except Exception as e:
-            return e
+        except Exception:
+            return make_response(jsonify({'error': 'Parameters not provided'}), 404)
 
     def get(self):
         try:
