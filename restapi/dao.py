@@ -63,8 +63,10 @@ class BespokeDao:
             db = self.db.fruits
             modified = db.update_one({'_id': ObjectId(_id)},
                                      {'$set': {'name':name, 'sweetness': sweetness}})
-            find = db.find_one({'_id': ObjectId(_id)})
-            return find if find is not None else None
+            if modified.acknowledged:
+                return {'name': name, 'sweetness': sweetness, '_id': _id}
+            else:
+                return None
         except Exception as e:
             print(e, file=sys.stderr)
             raise
