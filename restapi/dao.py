@@ -13,7 +13,9 @@ class BespokeDao:
         fruit = db.find()
         items = []
         for i in fruit:
-            items.append({'name': i['name'], 'sweetness': i['sweetness'], '_id':i['_id']})
+            # TODO: just append the entire fruit data from the DB
+            # TODO: let the model decide what information it requires
+            items.append({'name': i['name'], 'sweetness': i['sweetness']})
         return items
 
     def get_by_name(self, name):
@@ -21,6 +23,9 @@ class BespokeDao:
         try:
             result = db.find_one({'name': name})
             #print(result, file=sys.stderr)
+            
+             # TODO: just return the fruit data, let the model decide what information it requires (implement this for all of below)
+             # TODO: if result is None, return None (implement this for all of the below)
             if result is None:
                 output = {'name': name, 'error': "Item not found in database"}
             else:
@@ -29,6 +34,8 @@ class BespokeDao:
         except Exception as e:
             print(e, file=sys.stderr)
             output = {'error': "Error"}
+            
+            # TODO: just log the error and raise the exception (implement this for all of the below)
             return output
 
     def get_by_id(self, _id):

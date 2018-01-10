@@ -1,3 +1,5 @@
+# TODO: specify which versions you want, if one of the packages updates, it will be automatically applied here and could break all the things
+
 Flask
 Flask-PyMongo
 flask-restful
