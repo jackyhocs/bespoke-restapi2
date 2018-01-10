@@ -12,38 +12,61 @@ parser.add_argument('name')
 # TODO: all of the model calls should be wrapped within a try/except block.
 # TODO: if an exception happens within the request we want to be able to log it, handle it, and return the error gracefully
 
+
 class BespokeApp(Resource):
     # TODO: change this to ID, and validate the ID is proper
     def get(self, name):
-        model = BespokeModel()
-        result = model.get_by_name(name)
-        return result
-
-    def post(self, name):
-        # TODO: post should exist in another class within this file
-        # TODO: one class deals with a single entity while the other deals with a collection of entities
-        # TODO: post does not take any parameters though, it just takes a payload
-        model = BespokeModel()
-        args = parser.parse_args()
-        sweetness = args['sweetness']
-        output = model.check_and_update(name, sweetness)
-        return output
+        try:
+            model = BespokeModel()
+            result = model.get_by_name(name)
+            return result
+        except Exception as e:
+            return e
 
     def put(self, name):
         # TODO: change this to ID, and validate the ID is proper
-        model = BespokeModel()
-        args = parser.parse_args()
-        sweetness = args['sweetness']
-        output = model.check_and_insert(name, sweetness)
-        return output
+        try:
+            model = BespokeModel()
+            args = parser.parse_args()
+            sweetness = args['sweetness']
+            output = model.check_and_insert(name, sweetness)
+            return output
+        except Exception as e:
+            return e
 
     def delete(self, name):
         # TODO: change this to ID, and validate the ID is proper
-        model = BespokeModel()
-        output = model.check_and_delete(name)
-        return output
+        try:
+            model = BespokeModel()
+            output = model.check_and_delete(name)
+            return output
+        except Exception as e:
+            return e
 
-api.add_resource(BespokeApp, '/fruits/<name>')
+
+class BespokeMultipleApp(Resource):
+    def post(self):
+        try:
+            model = BespokeModel()
+            args = parser.parse_args()
+            sweetness = args['sweetness']
+            name = args['name']
+            output = model.check_and_update(name, sweetness)
+            return output
+        except Exception as e:
+            return e
+
+    def get(self):
+        try:
+            model = BespokeModel()
+            output = model.get_all()
+            return output
+        except Exception as e:
+            return e
+
+
+api.add_resource(BespokeApp, '/fruits/<_id>')
+api.add_resource(BespokeMultipleApp, '/fruits')
 
 if __name__ == "__main__":
     app.run(debug=True, port=80, host='0.0.0.0')

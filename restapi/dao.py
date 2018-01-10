@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson import ObjectId
 import sys
 
 class BespokeDao:
@@ -12,7 +13,7 @@ class BespokeDao:
         fruit = db.find()
         items = []
         for i in fruit:
-            items.append({'name': i['name'], 'sweetness': i['sweetness']})
+            items.append({'name': i['name'], 'sweetness': i['sweetness'], '_id':i['_id']})
         return items
 
     def get_by_name(self, name):
@@ -23,21 +24,43 @@ class BespokeDao:
             if result is None:
                 output = {'name': name, 'error': "Item not found in database"}
             else:
-                output = {'name': name, 'sweetness': result['sweetness']}
+                output = {'name': name, 'sweetness': result['sweetness'], '_id':i['_id']}
             return output
         except Exception as e:
             print(e, file=sys.stderr)
             output = {'error': "Error"}
             return output
 
+    def get_by_id(self, _id):
+        db = self.db.fruits
+        try:
+            result = db.find_one({'_id': ObjectId(_id)})
+            # print(result, file=sys.stderr)
+            '''if result is None:
+                output = {'name': name, 'error': "Item not found in database"}
+            else:
+                output = result'''
+            return result
+        except Exception as e:
+            print(e, file=sys.stderr)
+            output = {'error': "Error, could not find item with id {}".format(_id)}
+            return output
+
+    def check_if_id_exists(self, _id):
+        db = self.db.fruits
+        try:
+            result = db.find_one({'_id': ObjectId(_id)})
+            return result is not None
+        except Exception as e:
+            print(e, file=sys.stderr)
+            output = {'error': "Error, could not check if item with id {} exists".format(_id)}
+            return output
+
     def check_if_exists(self, name):
         db = self.db.fruits
         try:
             fruit = db.find_one({'name': name})
-            if fruit is None:
-                return False
-            else:
-                return True
+            return fruit is not None
         except Exception as e:
             print(e, file=sys.stderr)
             output = {'error': "Error, trying to find if an item exists"}
@@ -48,7 +71,7 @@ class BespokeDao:
         try:
             id = db.insert_one({'name': name, 'sweetness': sweetness})
             if id.acknowledged:
-                output = {"name": name, "sweetness": sweetness, "inserted": id.acknowledged}
+                output = {"name": name, "sweetness": sweetness, "inserted": id.acknowledged,"_id": str(id.inserted_id)}
             else:
                 output = {"name": name, "sweetness": sweetness, "error": "Error, occurred when insertin"}
             return output
@@ -63,7 +86,7 @@ class BespokeDao:
             modified = db.update_one({'name': name}, {'$set': {'sweetness': sweetness}})
             #print(modified.acknowledged, file=sys.stderr)
             if modified.acknowledged:
-                output = {"name": name, "sweetness": sweetness, "modified": modified.acknowledged}
+                output = {"name": name, "sweetness": sweetness, "modified": modified.acknowledged, "_id": str(modified.upserted_id)}
             else:
                 output = {"name":name, "error": "Error, update not acknowledged"}
             return output
