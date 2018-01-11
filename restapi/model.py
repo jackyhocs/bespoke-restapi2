@@ -69,7 +69,7 @@ class BespokeModel:
         try:
             dao = BespokeDao()
             item = dao.update_item(_id, name, sweetness)
-            item_model = BespokeModel({'name': name, 'sweetness': sweetness, '_id': _id})if item else None
+            item_model = BespokeModel(item)if item else None
             return item_model
         except Exception as e:
             print(e, file=sys.stderr)

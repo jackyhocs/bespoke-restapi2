@@ -63,7 +63,7 @@ class BespokeDao:
             db = self.db.fruits
             modified = db.update_one({'_id': ObjectId(_id)},
                                      {'$set': {'name': name, 'sweetness': sweetness}})
-            if modified.acknowledged:
+            if modified.modified_count == 1:
                 return {'name': name, 'sweetness': sweetness, '_id': _id}
             else:
                 return None
