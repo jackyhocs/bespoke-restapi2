@@ -33,7 +33,7 @@ class BespokeApp(Resource):
             if is_valid_id(_id):
                 args = parser.parse_args()
                 sweetness = args['sweetness']
-                name = args['name']
+                name = args['name'].strip()
                 if name is not None and sweetness is not None and is_valid_input(name, sweetness):
                     result = BespokeModel.update_item(_id, name, sweetness)
                     if result is None:
@@ -68,17 +68,17 @@ class BespokeNoParamApp(Resource):
         try:
             args = parser.parse_args()
             sweetness = args['sweetness']
-            name = args['name']
-            if name is not None and sweetness is not None and isinstance(sweetness, int) and isinstance(name, str):
+            name = args['name'].strip()
+            if name is not None and sweetness is not None and is_valid_input(name, sweetness):
                 if not BespokeModel.is_existing_name(name):
                     result = BespokeModel.insert_item(name, sweetness)
                     if result is None:
-                        fruit = {'name': name,'sweetness': sweetness, 'error': "Entry does not exist"}
+                        fruit = {'name': name, 'sweetness': sweetness, 'error': "Entry does not exist"}
                     else:
                         fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
                     return fruit
                 else:
-                    return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
+                    return make_response(jsonify({"error": 'Duplicate fruits not accepted'}), 404)
             else:
                 return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
         except:

@@ -11,6 +11,6 @@ def is_valid_input(name, sweetness):
     try:
         schema = Schema({Required('sweetness'): All(int)})
         schema({'sweetness': sweetness})
-        return True if re.match("^[a-zA-Z]+$", name) else False
+        return True if re.match("^[a-zA-Z ]+$", name) else False
     except:
         return False
