@@ -61,6 +61,9 @@ class BespokeModel:
     def update_item(_id, name, sweetness):
         try:
             dao = BespokeDao()
+            preexisting = dao.get_by_name(name)
+            if preexisting and str(preexisting['_id']) != str(_id):
+                raise ValueError('New update name must be unique')
             item = dao.update_item(_id, name, sweetness)
         except Exception as e:
             print(e, file=sys.stderr)
@@ -72,6 +75,9 @@ class BespokeModel:
     def insert_item(name, sweetness):
         try:
             dao = BespokeDao()
+            preexisting = dao.get_by_name(name)
+            if preexisting:
+                raise ValueError('New insert name must be unique')
             item = dao.insert_item(name, sweetness)
         except Exception as e:
             print(e, file=sys.stderr)
@@ -84,7 +90,6 @@ class BespokeModel:
         try:
             dao = BespokeDao()
             item = dao.delete_item(_id)
-
         except Exception as e:
             print(e, file=sys.stderr)
             raise

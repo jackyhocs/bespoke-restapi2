@@ -9,20 +9,15 @@ def is_valid_id(_id):
 
 def error_builder(_id=None, msg=None, exception=None, collection=None):
     error = {}
-    print(error, file=sys.stderr)
     if _id:
         error['_id'] = _id
-    print(error, file=sys.stderr)
     if collection:
         for k, v in collection:
             error[k] = v
-    print(error, file=sys.stderr)
     if msg:
         error['msg'] = msg
-    print(error, file=sys.stderr)
     if exception:
         error['exception'] = str(exception)
-    print(error, file=sys.stderr)
     return error
 
 
