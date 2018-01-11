@@ -14,85 +14,79 @@ class BespokeModel:
         try:
             dao = BespokeDao()
             item = dao.get_by_id(_id)
-            if item is None:
-                item_model = None
-            else:
-                item_model = BespokeModel(item)
-            return item_model
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        item_model = BespokeModel(item) if item else None
+        return item_model
 
     @staticmethod
     def is_existing_name(name):
         try:
             dao = BespokeDao()
             exists = dao.get_by_name(name)
-            return True if exists is not None else False
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        return True if exists is not None else False
 
     @staticmethod
     def is_existing_id(_id):
         try:
             dao = BespokeDao()
             exists = dao.check_if_id_exists(_id)
-            return True if exists is not None else False
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        return True if exists is not None else False
 
     @staticmethod
     def is_valid(_id):
-        try:
-            return BespokeModel.is_existing_id(_id)
-        except Exception as e:
-            print(e, file=sys.stderr)
-            raise
+        return BespokeModel.is_existing_id(_id)
 
     @staticmethod
     def get_all():
         try:
             dao = BespokeDao()
             items = dao.get_all()
-            model_array = []
-            for i in items:
-                model_array.append(BespokeModel(i))
-            return model_array
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        model_array = []
+        for i in items:
+            model_array.append(BespokeModel(i))
+        return model_array
 
     @staticmethod
     def update_item(_id, name, sweetness):
         try:
             dao = BespokeDao()
             item = dao.update_item(_id, name, sweetness)
-            item_model = BespokeModel(item)if item else None
-            return item_model
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        item_model = BespokeModel(item) if item else None
+        return item_model
 
     @staticmethod
     def insert_item(name, sweetness):
         try:
             dao = BespokeDao()
             item = dao.insert_item(name, sweetness)
-            item_model = BespokeModel(item) if item else None
-            return item_model
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        item_model = BespokeModel(item) if item else None
+        return item_model
 
     @staticmethod
     def delete_item(_id):
         try:
             dao = BespokeDao()
             item = dao.delete_item(_id)
-            item_model = BespokeModel(item) if item else None
-            return item_model
+
         except Exception as e:
             print(e, file=sys.stderr)
             raise
+        item_model = BespokeModel(item) if item else None
+        return item_model
