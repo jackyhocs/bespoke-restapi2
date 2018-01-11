@@ -2,7 +2,7 @@ from flask import Flask, make_response, jsonify
 from flask_restful import Api, Resource, reqparse
 from model import BespokeModel
 import sys
-from validator import is_valid_id
+from validator import is_valid_id, is_valid_input
 
 app = Flask(__name__)
 api = Api(app)
@@ -34,7 +34,7 @@ class BespokeApp(Resource):
                 args = parser.parse_args()
                 sweetness = args['sweetness']
                 name = args['name']
-                if name is not None and sweetness is not None and isinstance(sweetness, int) and isinstance(name, str):
+                if name is not None and sweetness is not None and is_valid_input(name, sweetness):
                     result = BespokeModel.update_item(_id, name, sweetness)
                     if result is None:
                         fruit = {'_id': _id, 'error': "Entry not updated"}
