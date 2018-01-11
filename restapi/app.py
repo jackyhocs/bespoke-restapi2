@@ -34,13 +34,17 @@ class BespokeApp(Resource):
                 args = parser.parse_args()
                 sweetness = args['sweetness']
                 name = args['name'].strip()
+                name = " ".join(name.split())
                 if name is not None and sweetness is not None and is_valid_input(name, sweetness):
-                    result = BespokeModel.update_item(_id, name, sweetness)
-                    if result is None:
-                        fruit = {'_id': _id, 'error': "Entry not updated"}
+                    if not BespokeModel.is_existing_name(name):
+                        result = BespokeModel.update_item(_id, name, sweetness)
+                        if result is None:
+                            fruit = {'_id': _id, 'error': "Entry not updated"}
+                        else:
+                            fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'updated': True}
+                        return fruit
                     else:
-                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'updated': True}
-                    return fruit
+                        return make_response(jsonify({'error': 'Fruit with same name already exists, update denied'}), 404)
                 else:
                     return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
             else:
@@ -69,6 +73,7 @@ class BespokeNoParamApp(Resource):
             args = parser.parse_args()
             sweetness = args['sweetness']
             name = args['name'].strip()
+            name = " ".join(name.split())
             if name is not None and sweetness is not None and is_valid_input(name, sweetness):
                 if not BespokeModel.is_existing_name(name):
                     result = BespokeModel.insert_item(name, sweetness)

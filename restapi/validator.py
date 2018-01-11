@@ -1,11 +1,11 @@
-#import voluptuous
 from bson import ObjectId
-from voluptuous import Schema, Required, All, Length
-import sys
+from voluptuous import Schema, Required, All
 import re
+
 
 def is_valid_id(_id):
     return True if ObjectId.is_valid(_id) else False
+
 
 def is_valid_input(name, sweetness):
     try:
