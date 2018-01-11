@@ -20,7 +20,7 @@ class BespokeApp(Resource):
                 if result is None:
                     fruit = {'_id': _id, 'error': "Entry not retrieved"}
                 else:
-                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'retrieved': True}
                 return fruit
             else:
                 return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
@@ -39,7 +39,7 @@ class BespokeApp(Resource):
                     if result is None:
                         fruit = {'_id': _id, 'error': "Entry not updated"}
                     else:
-                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'updated': True}
                     return fruit
                 else:
                     return make_response(jsonify({'error': 'Parameters provided are invalid'}), 404)
@@ -55,7 +55,7 @@ class BespokeApp(Resource):
                 if result is None:
                     fruit = {'_id': _id, 'error': "Entry could not be deleted"}
                 else:
-                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                    fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'deleted': True}
                 return fruit
             else:
                 return make_response(jsonify({"error": 'ID specified does not exist'}), 404)
@@ -75,7 +75,7 @@ class BespokeNoParamApp(Resource):
                     if result is None:
                         fruit = {'name': name, 'sweetness': sweetness, 'error': "Entry does not exist"}
                     else:
-                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id}
+                        fruit = {'name': result.name, 'sweetness': result.sweetness, '_id': result._id, 'inserted': True}
                     return fruit
                 else:
                     return make_response(jsonify({"error": 'Duplicate fruits not accepted'}), 404)
