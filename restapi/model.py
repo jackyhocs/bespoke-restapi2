@@ -21,6 +21,19 @@ class BespokeModel:
         return item_model
 
     @staticmethod
+    def get_by_query(params):
+        try:
+            dao = BespokeDao()
+            items = dao.get_by_query(params)
+        except Exception as e:
+            print(e, file=sys.stderr)
+            raise
+        model_array = []
+        for i in items:
+            model_array.append(BespokeModel(i))
+        return model_array
+
+    @staticmethod
     def is_existing_name(name):
         try:
             dao = BespokeDao()
@@ -58,13 +71,14 @@ class BespokeModel:
         return model_array
 
     @staticmethod
-    def update_item(_id, name, sweetness):
+    def update_item(_id, params):
         try:
             dao = BespokeDao()
+            name = params['name']
             preexisting = dao.get_by_name(name)
             if preexisting and str(preexisting['_id']) != str(_id):
                 raise ValueError('New update name must be unique')
-            item = dao.update_item(_id, name, sweetness)
+            item = dao.update_item(_id, params)
         except Exception as e:
             print(e, file=sys.stderr)
             raise
@@ -72,13 +86,14 @@ class BespokeModel:
         return item_model
 
     @staticmethod
-    def insert_item(name, sweetness):
+    def insert_item(params):
         try:
             dao = BespokeDao()
+            name = params['name']
             preexisting = dao.get_by_name(name)
             if preexisting:
                 raise ValueError('New insert name must be unique')
-            item = dao.insert_item(name, sweetness)
+            item = dao.insert_item(params)
         except Exception as e:
             print(e, file=sys.stderr)
             raise

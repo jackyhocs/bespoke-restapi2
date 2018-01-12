@@ -35,3 +35,12 @@ def sanitize_input(user_input):
         return None
     sanitized = " ".join(user_input.strip().split())
     return sanitized
+
+def check_equality(eq, sweetness):
+    if eq != "eq" and eq != "gt" and eq != "gte" and eq != "lt" and eq != "lte":
+        return False
+    try:
+        int(sweetness)
+    except:
+        return False
+    return True
