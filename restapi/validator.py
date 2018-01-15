@@ -1,7 +1,6 @@
 from bson import ObjectId
 from voluptuous import Schema, Required, All
 import re
-import sys
 
 def is_valid_id(_id):
     return True if ObjectId.is_valid(_id) else False

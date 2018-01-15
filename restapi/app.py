@@ -1,7 +1,6 @@
 from flask import Flask, make_response, jsonify
 from flask_restful import Api, Resource, reqparse
 from model import BespokeModel
-import sys
 from validator import is_valid_id, is_valid_input, error_builder, sanitize_input, check_equality
 
 app = Flask(__name__)
@@ -28,7 +27,7 @@ class BespokeApp(Resource):
             error = error_builder(_id, "Unable to retrieve fruit")
             return make_response(jsonify(error), 404)
 
-        fruit['retrieved'] = True;
+        fruit['retrieved'] = True
         return make_response(jsonify(fruit), 200)
 
     def put(self, _id):
@@ -49,10 +48,11 @@ class BespokeApp(Resource):
             error = error_builder(None, "Error while updating fruit", e)
             return make_response(jsonify(error), 500)
 
-        fruit['updated'] = True
+
         if not fruit:
             error = error_builder(None, "Unable to update fruit")
             return make_response(jsonify(error), 404)
+        fruit['updated'] = True
 
         return make_response(jsonify(fruit), 200)
 
@@ -66,10 +66,11 @@ class BespokeApp(Resource):
             error = error_builder(_id, "Error while deleting fruit", e)
             return make_response(jsonify(error), 500)
 
-        fruit['deleted'] = True
+
         if not fruit:
             error = error_builder(_id, "Unable to delete fruit")
             return make_response(jsonify(error), 404)
+        fruit['deleted'] = True
 
         return make_response(jsonify(fruit), 204)
 
