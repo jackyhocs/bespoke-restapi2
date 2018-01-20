@@ -1,97 +1,76 @@
 from pymongo import MongoClient
-import sys
+from bson import ObjectId
+
 
 class BespokeDao:
     def __init__(self):
         self._logger = print
         client = MongoClient('mongo')
-        self.db = getattr(client,'fruits')
+        self.db = getattr(client, 'fruits')
 
     def get_all(self):
         db = self.db.fruits
         fruit = db.find()
         items = []
         for i in fruit:
-            
-            # TODO: just append the entire fruit data from the DB
-            # TODO: let the model decide what information it requires
-            items.append({'name': i['name'], 'sweetness': i['sweetness']})
-            
+            items.append(i)
         return items
+
+    def get_by_id(self, _id):
+        db = self.db.fruits
+        result = db.find_one({'_id': ObjectId(_id)})
+        if not result:
+            return None
+        return result
 
     def get_by_name(self, name):
         db = self.db.fruits
-        try:
-            result = db.find_one({'name': name})
-            #print(result, file=sys.stderr)
-            
-             # TODO: just return the fruit data, let the model decide what information it requires (implement this for all of below)
-             # TODO: if result is None, return None (implement this for all of the below)
-            if result is None:
-                output = {'name': name, 'error': "Item not found in database"}
-            else:
-                output = {'name': name, 'sweetness': result['sweetness']}
-                
-            return output
-        except Exception as e:
-            print(e, file=sys.stderr)
-            output = {'error': "Error"}
-            
-            # TODO: just log the error and raise the exception (implement this for all of the below)
-            return output
+        result = db.find_one({'name': name})
+        if not result:
+            return None
+        return result
 
-    def check_if_exists(self, name):
+    def get_by_query(self, params):
         db = self.db.fruits
-        try:
-            fruit = db.find_one({'name': name})
-            if fruit is None:
-                return False
-            else:
-                return True
-        except Exception as e:
-            print(e, file=sys.stderr)
-            output = {'error': "Error, trying to find if an item exists"}
-            return output
+        eq = "$"+params['eq']
+        query = {'sweetness': {eq: int(params['sweetness'])}}
+        if 'name' in params:
+            query['name'] = {"$eq": params['name']}
+        result = db.find(query)
+        if not result:
+            return None
+        return result
 
-    def insert_item(self, name, sweetness):
+    def check_if_id_exists(self, _id):
         db = self.db.fruits
-        try:
-            id = db.insert_one({'name': name, 'sweetness': sweetness})
-            if id.acknowledged:
-                output = {"name": name, "sweetness": sweetness, "inserted": id.acknowledged}
-            else:
-                output = {"name": name, "sweetness": sweetness, "error": "Error, occurred when insertin"}
-            return output
-        except Exception as e:
-            print(e, file=sys.stderr)
-            output = {'error': "Error, could not insert item"}
-            return output
+        result = db.find_one({'_id': ObjectId(_id)})
+        if not result:
+            return None
+        return result
 
-    def update_item(self, name, sweetness):
+    def insert_item(self, params):
         db = self.db.fruits
-        try:
-            modified = db.update_one({'name': name}, {'$set': {'sweetness': sweetness}})
-            #print(modified.acknowledged, file=sys.stderr)
-            if modified.acknowledged:
-                output = {"name": name, "sweetness": sweetness, "modified": modified.acknowledged}
-            else:
-                output = {"name":name, "error": "Error, update not acknowledged"}
-            return output
-        except Exception as e:
-            print(e, file=sys.stderr)
-            output = {'error': "Error, could not update item"}
-            return output
+        inserted = db.insert_one({'name': params['name'], 'sweetness': params['sweetness']})
+        find = db.find_one({'_id': inserted.inserted_id})
+        if not find:
+            return None
+        return find
 
-    def delete_item(self, name):
+    def update_item(self, _id, params):
         db = self.db.fruits
-        try:
-            deleted = db.delete_one({'name': name})
-            if deleted.acknowledged:
-                output = {"name": name, "deleted": deleted.acknowledged}
-            else:
-                output = {"name": name, "error": "Error, delete not acknowledged"}
-            return output
-        except Exception as e:
-            print(e, file=sys.stderr)
-            output = {'error': "Error, could not perform delete item"}
-            return output
+        name = params['name']
+        sweetness = params['sweetness']
+        newvalues = {'name': name, 'sweetness': sweetness}
+        modified = db.update_one({'_id': ObjectId(_id)},
+                                 {'$set': newvalues})
+        find = db.find_one({'_id': ObjectId(_id)})
+        if not find:
+            return None
+        return find
+
+    def delete_item(self, _id):
+        db = self.db.fruits
+        deleted = db.find_one_and_delete({'_id': ObjectId(_id)})
+        if not deleted:
+            return None
+        return deleted
